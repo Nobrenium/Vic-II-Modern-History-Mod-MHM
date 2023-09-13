@@ -28,23 +28,43 @@ overpopulated_province5 = {
 ### Seasonal Effects ###
 
 winter_province_modifier = {
+	movement_cost = 0.20
+	supply_limit = -10.0
+	icon = 4
+}
+winter_farm_province_modifier = {
 	local_RGO_throughput = -0.06
 	icon = 4
 }
 
 spring_province_modifier = {
+	movement_cost = -0.1
+	supply_limit = 5.0
+	icon = 3
+}
+spring_farm_province_modifier = {
 	local_RGO_throughput = 0.02
 	icon = 3
 }
 
 summer_province_modifier = {
+	movement_cost = -0.2
+	supply_limit = 10.0
+	icon = 3
+}
+summer_farm_province_modifier = {
 	local_RGO_throughput = 0.04
 	icon = 3
 }
 
 autumn_province_modifier = {
-	local_RGO_throughput = 0.06
+	movement_cost = 0.1
+	supply_limit = -5.0
 	icon = 4
+}
+autumn_farm_province_modifier = {
+	local_RGO_throughput = 0.06
+	icon = 3
 }
 
 ### Generic Development Aid ###
@@ -1455,7 +1475,6 @@ mine_rgo_eff = -0.2
 immigrant_push = 0.40
 immigrant_attract = -0.8
 pop_consciousness_modifier = -0.20
-population_growth = 0.002
 icon = 14
 }
 
@@ -1470,7 +1489,6 @@ mine_rgo_eff = -0.15
 immigrant_push = 0.30
 immigrant_attract = -0.6
 pop_consciousness_modifier = -0.15
-population_growth = 0.001
 icon = 14
 }
 
@@ -1503,7 +1521,6 @@ icon = 14
 
 dev_5 = { #40% - 50% literacy
 icon = 13
-population_growth = -0.001
 }
 
 dev_6 = { #50% - 60% literacy
@@ -1513,7 +1530,6 @@ local_RGO_throughput = 0.10
 farm_rgo_eff = 0.10
 mine_rgo_eff = 0.10
 pop_consciousness_modifier = 0.05
-population_growth = -0.002
 icon = 13
 }
 
@@ -2560,14 +2576,15 @@ prestige = -0.02
 icon = 16 
 }
 
-develop_bio_weapons = { 
+develop_bio_weapons = {
+badboy = 0.03
 tax_efficiency = -0.02
 icon = 16 
 }
 
 bio_nation = { 
 tax_efficiency = -0.01
-prestige = -0.02 
+badboy = 0.02
 icon = 16 
 }
 
@@ -4518,7 +4535,7 @@ icon = 18
 
 develop_chemical_bomb = {
 tax_efficiency = -0.01
-badboy = 0.01
+badboy = 0.03
 icon = 18
 }
 
@@ -4957,13 +4974,13 @@ icon = 24
 
 develop_atomic_bomb = {
 tax_efficiency = -0.04
-badboy = 0.01
+badboy = 0.03
 icon = 24
 }
 
 develop_hydrogen_bomb = {
 tax_efficiency = -0.08
-badboy = 0.01
+badboy = 0.03
 icon = 24
 }
 
@@ -4975,6 +4992,26 @@ icon = 23
 hydrogen_nation = {
 min_military_spending = 0.20
 icon = 23
+}
+
+nuclear_nation_marker = {
+icon = 25
+}
+chemical_nation_marker = {
+icon = 25
+}
+bio_nation_marker = {
+icon = 25
+}
+
+un_member_marker = {
+icon = 9
+}
+unga_member_marker = {
+icon = 9
+}
+unsc_member_marker = {
+icon = 1
 }
 
 nuke_high = {
@@ -6986,16 +7023,6 @@ natalism_1 = {
 	icon = 19
 }
 
-natalism_2 = {
-	population_growth = 0.002
-	icon = 19
-}
-
-natalism_3 = {
-	population_growth = 0.003
-	icon = 19
-}
-
 contraception_decay = {
 	tax_efficiency = -0.025
 	#global_population_growth = 0.002
@@ -7825,7 +7852,10 @@ denied_independence = {
 }
 
 neutrality = {
-	diplomatic_points_modifier = -0.75
+	icon = 5
+}
+neutrality_AI = {
+	diplomatic_points_modifier = -1
 	icon = 5
 }
 

@@ -5,17 +5,6 @@
 
 #######
 
-#Pop displacement system
-
-pop_displacement_system = {
-	trigger = {
-		has_country_flag = pop_displacement_system_active
-	}
-	prestige = -0.1
-	non_accepted_pop_militancy_modifier = 0.5
-	badboy = 0.01
-}
-
 promote_colonial_migration_system = {
 	trigger = {
 		has_country_flag = promote_colonial_migration_active
@@ -415,6 +404,7 @@ space_age = {
 	culture_tech_research_bonus = 0.1
 	diplomatic_points_modifier = 0.2
 	influence_modifier = 0.1
+	education_efficiency = 0.10
 }
 
 information_age = {
@@ -433,6 +423,7 @@ information_age = {
 	influence_modifier = 0.2
 	factory_owner_cost = -0.05
 	factory_input = -0.05
+	education_efficiency = 0.25
 }
 
 automation_age = {
@@ -447,6 +438,7 @@ automation_age = {
 	goods_demand = 0.15
 	industry_tech_research_bonus = 0.2
 	factory_input = -0.1
+	education_efficiency = 0.50
 }
 
 future_age = {
@@ -461,6 +453,7 @@ future_age = {
 	goods_demand = 0.20
 	culture_tech_research_bonus = 0.5
 	factory_input = -0.2
+	education_efficiency = 1.0
 }
 
 elchigh = {

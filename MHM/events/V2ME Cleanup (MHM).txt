@@ -24,24 +24,6 @@
 #
 
 country_event = {
-	id = 47777789
-	title = "AI: Cleanup Setup"
-	desc = "AI: Cleanup Setup"
-	
-	is_triggered_only = yes
-	
-	option = {
-		name = "Set up Cleanup"
-		CLN = {
-			country_event = 47777787
-			country_event = 47777790
-			country_event = 47777791
-			add_country_modifier = { name = neutrality duration = -1 }
-		}
-	}
-}
-
-country_event = {
 	id = 47777787
 	title = "AI: Daily Cleanup Check"
 	desc = "AI: Daily Cleanup Check"
@@ -50,6 +32,56 @@ country_event = {
 	
 	option = {
 		name = "Checking..."
+		
+		#This makes CLN not have to exist on the map
+		CLN = { change_variable = { which = days_till_monthly_cleanup value = -1 } }
+		random_country = {
+			limit = { 
+				NOT = {
+					CLN = { check_variable = { which = days_till_monthly_cleanup value = 0 } }
+				}
+			}
+			CLN = {	set_variable = { which = days_till_monthly_cleanup value = 31 } }
+			CLN = {	change_variable = { which = months_till_yearly_cleanup value = -1 } }
+			CLN = { country_event = 477877790 }
+		}
+		random_country = {
+			limit = { 
+				NOT = {
+					CLN = { check_variable = { which = months_till_yearly_cleanup value = 0 } }
+				}
+			}
+			CLN = {	set_variable = { which = months_till_yearly_cleanup value = 12 } }
+			CLN = { country_event = 477877791 }
+		}
+		
+		clr_global_flag = daily_cleanup_on
+		CLN = { country_event = { id = 477877787 days = 1 } }
+		
+		#Craftsmen, Soldiers, and Bureaucrats bugfix
+		any_country = {
+			any_owned = {
+				limit = {
+					OR = {
+						is_primary_culture = yes
+						is_accepted_culture = yes
+					}
+				}
+				any_pop = {
+					limit = {
+						is_primary_culture = no
+						is_accepted_culture = no
+						OR = {
+							type = craftsmen
+							type = soldiers
+							type = officers
+							type = bureaucrats
+						}
+					}
+					pop_type = farmers
+				}
+			}
+		}
 		
 		#Clean up farmers in labourer RGOs and labourers in farmer RGOs
 		any_country	= {
@@ -145,12 +177,488 @@ country_event = {
 			release_vassal = CLN
 		}
 		
+		#Neutrality marker cleanup in case country changes capitals
+		any_country = {
+			limit = {
+				OR = { has_country_modifier = neutrality has_country_modifier = neutrality_AI }
+			}
+			any_owned = {
+				limit = {
+					is_capital = yes
+					NOT = { has_province_modifier = neutral_nation_marker }
+				}
+				add_province_modifier = { name = neutral_nation_marker duration = -1 }
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_modifier = neutrality has_country_modifier = neutrality_AI }
+			}
+			any_owned = {
+				limit = {
+					is_capital = no
+					has_province_modifier = neutral_nation_marker
+				}
+				remove_province_modifier = neutral_nation_marker
+			}
+		}
+		#Neutrality modifier cleanup for AI nations
+		any_country = {
+			limit = {
+				has_country_modifier = neutrality
+				ai = yes
+				NOT = { has_country_modifier = neutrality_AI }
+			}
+			remove_country_modifier = neutrality
+			add_country_modifier = { name = neutrality_AI duration = -1 }
+		}
+		any_country = {
+			limit = {
+				has_country_modifier = neutrality_AI
+				ai = no
+			}
+			remove_country_modifier = neutrality_AI
+			add_country_modifier = { name = neutrality duration = -1 }
+		}
+		
+		#Mark which countries have nukes
+		any_country = {
+			limit = {
+				OR = { has_country_modifier = atomic_nation has_country_modifier = hydrogen_nation }
+			}
+			any_owned = {
+				limit = {
+					is_capital = yes
+					NOT = { has_province_modifier = nuclear_nation_marker }
+				}
+				add_province_modifier = { name = nuclear_nation_marker duration = -1 }
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_modifier = atomic_nation has_country_modifier = hydrogen_nation }
+			}
+			any_owned = {
+				limit = {
+					is_capital = no
+					has_province_modifier = nuclear_nation_marker
+				}
+				remove_province_modifier = nuclear_nation_marker
+			}
+		}
+		
+		#Mark which countries have chemical weapons
+		any_country = {
+			limit = {
+				has_country_modifier = chemical_nation
+			}
+			any_owned = {
+				limit = {
+					is_capital = yes
+					NOT = { has_province_modifier = chemical_nation_marker }
+				}
+				add_province_modifier = { name = chemical_nation_marker duration = -1 }
+			}
+		}
+		any_country = {
+			limit = {
+				has_country_modifier = chemical_nation
+			}
+			any_owned = {
+				limit = {
+					is_capital = no
+					has_province_modifier = chemical_nation_marker
+				}
+				remove_province_modifier = chemical_nation_marker
+			}
+		}
+		
+		#Mark which countries have bioweapons
+		any_country = {
+			limit = {
+				has_country_modifier = bio_nation
+			}
+			any_owned = {
+				limit = {
+					is_capital = yes
+					NOT = { has_province_modifier = bio_nation_marker }
+				}
+				add_province_modifier = { name = bio_nation_marker duration = -1 }
+			}
+		}
+		any_country = {
+			limit = {
+				has_country_modifier = bio_nation
+			}
+			any_owned = {
+				limit = {
+					is_capital = no
+					has_province_modifier = bio_nation_marker
+				}
+				remove_province_modifier = bio_nation_marker
+			}
+		}
+		
+		#Mark which countries are general UN members
+		any_country = {
+			limit = {
+				has_country_modifier = united_nations
+			}
+			any_owned = {
+				limit = {
+					is_capital = yes
+					NOT = { has_province_modifier = un_member_marker }
+				}
+				add_province_modifier = { name = un_member_marker duration = -1 }
+			}
+		}
+		any_country = {
+			limit = {
+				has_country_modifier = united_nations
+			}
+			any_owned = {
+				limit = {
+					is_capital = no
+					has_province_modifier = un_member_marker
+				}
+				remove_province_modifier = un_member_marker
+			}
+		}
+		
+		#Mark which countries are UNGA members
+		any_country = {
+			limit = {
+				has_country_modifier = united_nations_ga_member
+			}
+			any_owned = {
+				limit = {
+					is_capital = yes
+					NOT = { has_province_modifier = unga_member_marker }
+				}
+				add_province_modifier = { name = unga_member_marker duration = -1 }
+			}
+		}
+		any_country = {
+			limit = {
+				has_country_modifier = united_nations_ga_member
+			}
+			any_owned = {
+				limit = {
+					is_capital = no
+					has_province_modifier = unga_member_marker
+				}
+				remove_province_modifier = unga_member_marker
+			}
+		}
+		
+		#Mark which countries are UNSC permanent members
+		any_country = {
+			limit = {
+				has_country_modifier = unsc_permanent_member
+			}
+			any_owned = {
+				limit = {
+					is_capital = yes
+					NOT = { has_province_modifier = unsc_member_marker }
+				}
+				add_province_modifier = { name = unsc_member_marker duration = -1 }
+			}
+		}
+		any_country = {
+			limit = {
+				has_country_modifier = unsc_permanent_member
+			}
+			any_owned = {
+				limit = {
+					is_capital = no
+					has_province_modifier = unsc_member_marker
+				}
+				remove_province_modifier = unsc_member_marker
+			}
+		}
+		
 		########################
 		###					 ###
 		### Seasonal Effects ###
 		###					 ###
 		########################
 		
+		### General ###
+		# December - February
+		north_hemisphere_metaregion = {
+			limit = {
+				owner = {
+					OR = {
+						month = 11
+						AND = {
+							month = 0
+							NOT = { month = 2 }
+						}
+					}
+				}
+				NOT = { has_province_modifier = winter_province_modifier }
+				NOT = {
+					OR = {
+						terrain = desert
+						terrain = desert_hills
+						terrain = desert_mountains
+						terrain = semi_desert
+						terrain = semi_desert_hills
+						terrain = semi_desert_mountains
+						terrain = semi_desert_mountains
+						
+						terrain = jungle
+						terrain = jungle_hills
+						terrain = jungle_mountains
+						terrain = seasonal_jungle
+						terrain = seasonal_jungle_hills
+						terrain = seasonal_jungle_mountains
+						terrain = swamp_jungle
+					}
+				}
+			}
+			remove_province_modifier = spring_province_modifier
+			remove_province_modifier = summer_province_modifier
+			remove_province_modifier = autumn_province_modifier
+			add_province_modifier = { name = winter_province_modifier duration = -1 }
+		}
+		south_hemisphere_metaregion = {
+			limit = {
+				owner = {
+					OR = {
+						month = 11
+						AND = {
+							month = 0
+							NOT = { month = 2 }
+						}
+					}
+				}
+				NOT = { has_province_modifier = summer_province_modifier }
+				NOT = {
+					OR = {
+						terrain = desert
+						terrain = desert_hills
+						terrain = desert_mountains
+						terrain = semi_desert
+						terrain = semi_desert_hills
+						terrain = semi_desert_mountains
+						terrain = semi_desert_mountains
+						
+						terrain = jungle
+						terrain = jungle_hills
+						terrain = jungle_mountains
+						terrain = seasonal_jungle
+						terrain = seasonal_jungle_hills
+						terrain = seasonal_jungle_mountains
+						terrain = swamp_jungle
+					}
+				}
+			}
+			remove_province_modifier = spring_province_modifier
+			add_province_modifier = { name = summer_province_modifier duration = -1 }
+			remove_province_modifier = autumn_province_modifier
+			remove_province_modifier = winter_province_modifier
+		}
+		
+		# March - May
+		north_hemisphere_metaregion = {
+			limit = {
+				owner = {
+					month = 2
+					NOT = { month = 5 }
+				}
+				NOT = { has_province_modifier = spring_province_modifier }
+				NOT = {
+					OR = {
+						terrain = desert
+						terrain = desert_hills
+						terrain = desert_mountains
+						terrain = semi_desert
+						terrain = semi_desert_hills
+						terrain = semi_desert_mountains
+						terrain = semi_desert_mountains
+						
+						terrain = jungle
+						terrain = jungle_hills
+						terrain = jungle_mountains
+						terrain = seasonal_jungle
+						terrain = seasonal_jungle_hills
+						terrain = seasonal_jungle_mountains
+						terrain = swamp_jungle
+					}
+				}
+			}
+			add_province_modifier = { name = spring_province_modifier duration = -1 }
+			remove_province_modifier = summer_province_modifier
+			remove_province_modifier = autumn_province_modifier
+			remove_province_modifier = winter_province_modifier
+		}
+		south_hemisphere_metaregion = {
+			limit = {
+				owner = {
+					month = 2
+					NOT = { month = 5 }
+				}
+				NOT = { has_province_modifier = autumn_province_modifier }
+				NOT = {
+					OR = {
+						terrain = desert
+						terrain = desert_hills
+						terrain = desert_mountains
+						terrain = semi_desert
+						terrain = semi_desert_hills
+						terrain = semi_desert_mountains
+						terrain = semi_desert_mountains
+						
+						terrain = jungle
+						terrain = jungle_hills
+						terrain = jungle_mountains
+						terrain = seasonal_jungle
+						terrain = seasonal_jungle_hills
+						terrain = seasonal_jungle_mountains
+						terrain = swamp_jungle
+					}
+				}
+			}
+			remove_province_modifier = spring_province_modifier
+			remove_province_modifier = summer_province_modifier
+			add_province_modifier = { name = autumn_province_modifier duration = -1 }
+			remove_province_modifier = winter_province_modifier
+		}
+		
+		# June - August
+		north_hemisphere_metaregion = {
+			limit = {
+				owner = {
+					month = 5
+					NOT = { month = 8 }
+				}
+				NOT = { has_province_modifier = summer_province_modifier }
+				NOT = {
+					OR = {
+						terrain = desert
+						terrain = desert_hills
+						terrain = desert_mountains
+						terrain = semi_desert
+						terrain = semi_desert_hills
+						terrain = semi_desert_mountains
+						terrain = semi_desert_mountains
+						
+						terrain = jungle
+						terrain = jungle_hills
+						terrain = jungle_mountains
+						terrain = seasonal_jungle
+						terrain = seasonal_jungle_hills
+						terrain = seasonal_jungle_mountains
+						terrain = swamp_jungle
+					}
+				}
+			}
+			remove_province_modifier = spring_province_modifier
+			add_province_modifier = { name = summer_province_modifier duration = -1 }
+			remove_province_modifier = autumn_province_modifier
+			remove_province_modifier = winter_province_modifier
+		}
+		south_hemisphere_metaregion = {
+			limit = {
+				owner = {
+					month = 5
+					NOT = { month = 8 }
+				}
+				NOT = { has_province_modifier = winter_province_modifier }
+				NOT = {
+					OR = {
+						terrain = desert
+						terrain = desert_hills
+						terrain = desert_mountains
+						terrain = semi_desert
+						terrain = semi_desert_hills
+						terrain = semi_desert_mountains
+						terrain = semi_desert_mountains
+						
+						terrain = jungle
+						terrain = jungle_hills
+						terrain = jungle_mountains
+						terrain = seasonal_jungle
+						terrain = seasonal_jungle_hills
+						terrain = seasonal_jungle_mountains
+						terrain = swamp_jungle
+					}
+				}
+			}
+			remove_province_modifier = spring_province_modifier
+			remove_province_modifier = summer_province_modifier
+			remove_province_modifier = autumn_province_modifier
+			add_province_modifier = { name = winter_province_modifier duration = -1 }
+		}
+		
+		# September - November
+		north_hemisphere_metaregion = {
+			limit = {
+				owner = {
+					month = 8
+					NOT = { month = 11 }
+				}
+				NOT = { has_province_modifier = autumn_province_modifier }
+				NOT = {
+					OR = {
+						terrain = desert
+						terrain = desert_hills
+						terrain = desert_mountains
+						terrain = semi_desert
+						terrain = semi_desert_hills
+						terrain = semi_desert_mountains
+						terrain = semi_desert_mountains
+						
+						terrain = jungle
+						terrain = jungle_hills
+						terrain = jungle_mountains
+						terrain = seasonal_jungle
+						terrain = seasonal_jungle_hills
+						terrain = seasonal_jungle_mountains
+						terrain = swamp_jungle
+					}
+				}
+			}
+			remove_province_modifier = spring_province_modifier
+			remove_province_modifier = summer_province_modifier
+			add_province_modifier = { name = autumn_province_modifier duration = -1 }
+			remove_province_modifier = winter_province_modifier
+		}
+		south_hemisphere_metaregion = {
+			limit = {
+				owner = {
+					month = 8
+					NOT = { month = 11 }
+				}
+				NOT = { has_province_modifier = spring_province_modifier }
+				NOT = {
+					OR = {
+						terrain = desert
+						terrain = desert_hills
+						terrain = desert_mountains
+						terrain = semi_desert
+						terrain = semi_desert_hills
+						terrain = semi_desert_mountains
+						terrain = semi_desert_mountains
+						
+						terrain = jungle
+						terrain = jungle_hills
+						terrain = jungle_mountains
+						terrain = seasonal_jungle
+						terrain = seasonal_jungle_hills
+						terrain = seasonal_jungle_mountains
+						terrain = swamp_jungle
+					}
+				}
+			}
+			add_province_modifier = { name = spring_province_modifier duration = -1 }
+			remove_province_modifier = summer_province_modifier
+			remove_province_modifier = autumn_province_modifier
+			remove_province_modifier = winter_province_modifier
+		}
+		
+		### Farms ###
 		# December - February
 		north_hemisphere_metaregion = {
 			limit = {
@@ -175,12 +683,12 @@ country_event = {
 						trade_goods = cotton
 					}
 				}
-				NOT = { has_province_modifier = winter_province_modifier }
+				NOT = { has_province_modifier = winter_farm_province_modifier }
 			}
-			remove_province_modifier = spring_province_modifier
-			remove_province_modifier = summer_province_modifier
-			remove_province_modifier = autumn_province_modifier
-			add_province_modifier = { name = winter_province_modifier duration = -1 }
+			remove_province_modifier = spring_farm_province_modifier
+			remove_province_modifier = summer_farm_province_modifier
+			remove_province_modifier = autumn_farm_province_modifier
+			add_province_modifier = { name = winter_farm_province_modifier duration = -1 }
 		}
 		south_hemisphere_metaregion = {
 			limit = {
@@ -205,12 +713,12 @@ country_event = {
 						trade_goods = cotton
 					}
 				}
-				NOT = { has_province_modifier = summer_province_modifier }
+				NOT = { has_province_modifier = summer_farm_province_modifier }
 			}
-			remove_province_modifier = spring_province_modifier
-			add_province_modifier = { name = summer_province_modifier duration = -1 }
-			remove_province_modifier = autumn_province_modifier
-			remove_province_modifier = winter_province_modifier
+			remove_province_modifier = spring_farm_province_modifier
+			add_province_modifier = { name = summer_farm_province_modifier duration = -1 }
+			remove_province_modifier = autumn_farm_province_modifier
+			remove_province_modifier = winter_farm_province_modifier
 		}
 		
 		# March - May
@@ -232,12 +740,12 @@ country_event = {
 						trade_goods = cotton
 					}
 				}
-				NOT = { has_province_modifier = spring_province_modifier }
+				NOT = { has_province_modifier = spring_farm_province_modifier }
 			}
-			add_province_modifier = { name = spring_province_modifier duration = -1 }
-			remove_province_modifier = summer_province_modifier
-			remove_province_modifier = autumn_province_modifier
-			remove_province_modifier = winter_province_modifier
+			add_province_modifier = { name = spring_farm_province_modifier duration = -1 }
+			remove_province_modifier = summer_farm_province_modifier
+			remove_province_modifier = autumn_farm_province_modifier
+			remove_province_modifier = winter_farm_province_modifier
 		}
 		south_hemisphere_metaregion = {
 			limit = {
@@ -257,12 +765,12 @@ country_event = {
 						trade_goods = cotton
 					}
 				}
-				NOT = { has_province_modifier = autumn_province_modifier }
+				NOT = { has_province_modifier = autumn_farm_province_modifier }
 			}
-			remove_province_modifier = spring_province_modifier
-			remove_province_modifier = summer_province_modifier
-			add_province_modifier = { name = autumn_province_modifier duration = -1 }
-			remove_province_modifier = winter_province_modifier
+			remove_province_modifier = spring_farm_province_modifier
+			remove_province_modifier = summer_farm_province_modifier
+			add_province_modifier = { name = autumn_farm_province_modifier duration = -1 }
+			remove_province_modifier = winter_farm_province_modifier
 		}
 		
 		# June - August
@@ -284,12 +792,12 @@ country_event = {
 						trade_goods = cotton
 					}
 				}
-				NOT = { has_province_modifier = summer_province_modifier }
+				NOT = { has_province_modifier = summer_farm_province_modifier }
 			}
-			remove_province_modifier = spring_province_modifier
-			add_province_modifier = { name = summer_province_modifier duration = -1 }
-			remove_province_modifier = autumn_province_modifier
-			remove_province_modifier = winter_province_modifier
+			remove_province_modifier = spring_farm_province_modifier
+			add_province_modifier = { name = summer_farm_province_modifier duration = -1 }
+			remove_province_modifier = autumn_farm_province_modifier
+			remove_province_modifier = winter_farm_province_modifier
 		}
 		south_hemisphere_metaregion = {
 			limit = {
@@ -309,12 +817,12 @@ country_event = {
 						trade_goods = cotton
 					}
 				}
-				NOT = { has_province_modifier = winter_province_modifier }
+				NOT = { has_province_modifier = winter_farm_province_modifier }
 			}
-			remove_province_modifier = spring_province_modifier
-			remove_province_modifier = summer_province_modifier
-			remove_province_modifier = autumn_province_modifier
-			add_province_modifier = { name = winter_province_modifier duration = -1 }
+			remove_province_modifier = spring_farm_province_modifier
+			remove_province_modifier = summer_farm_province_modifier
+			remove_province_modifier = autumn_farm_province_modifier
+			add_province_modifier = { name = winter_farm_province_modifier duration = -1 }
 		}
 		
 		# September - November
@@ -336,12 +844,12 @@ country_event = {
 						trade_goods = cotton
 					}
 				}
-				NOT = { has_province_modifier = autumn_province_modifier }
+				NOT = { has_province_modifier = autumn_farm_province_modifier }
 			}
-			remove_province_modifier = spring_province_modifier
-			remove_province_modifier = summer_province_modifier
-			add_province_modifier = { name = autumn_province_modifier duration = -1 }
-			remove_province_modifier = winter_province_modifier
+			remove_province_modifier = spring_farm_province_modifier
+			remove_province_modifier = summer_farm_province_modifier
+			add_province_modifier = { name = autumn_farm_province_modifier duration = -1 }
+			remove_province_modifier = winter_farm_province_modifier
 		}
 		south_hemisphere_metaregion = {
 			limit = {
@@ -361,12 +869,12 @@ country_event = {
 						trade_goods = cotton
 					}
 				}
-				NOT = { has_province_modifier = spring_province_modifier }
+				NOT = { has_province_modifier = spring_farm_province_modifier }
 			}
-			add_province_modifier = { name = spring_province_modifier duration = -1 }
-			remove_province_modifier = summer_province_modifier
-			remove_province_modifier = autumn_province_modifier
-			remove_province_modifier = winter_province_modifier
+			add_province_modifier = { name = spring_farm_province_modifier duration = -1 }
+			remove_province_modifier = summer_farm_province_modifier
+			remove_province_modifier = autumn_farm_province_modifier
+			remove_province_modifier = winter_farm_province_modifier
 		}
 		
 		#########################################################
@@ -685,6 +1193,41 @@ country_event = {
 			}
 		}
 		
+		#Superstate province modifiers
+		any_country	= {
+			limit = {
+				capital_scope = { has_province_modifier = single_market }
+			}
+			any_owned = {
+				limit = {
+					NOT = { has_province_modifier = single_market }
+				}
+				add_province_modifier = { name = single_market duration = -1 }
+			}
+		}
+		any_country	= {
+			limit = {
+				capital_scope = { has_province_modifier = currency_union_province }
+			}
+			any_owned = {
+				limit = {
+					NOT = { has_province_modifier = currency_union_province }
+				}
+				add_province_modifier = { name = currency_union_province duration = -1 }
+			}
+		}
+		any_country	= {
+			limit = {
+				capital_scope = { has_province_modifier = defence_union }
+			}
+			any_owned = {
+				limit = {
+					NOT = { has_province_modifier = defence_union }
+				}
+				add_province_modifier = { name = defence_union duration = -1 }
+			}
+		}
+		
 		#Economic focus cleanup
 		any_country	= {
 			limit = {
@@ -901,6 +1444,93 @@ country_event = {
 			}
 			set_country_flag = superstate_flag
 		}
+		
+		################################
+		### Population Growth Trends ###
+		################################
+		
+		#reduce_pop = 1.002 leads to 1.02% increase per year which translates into 2% annual growth per year. 
+		#30,076,000 x 1.002 (repeated 12 times) leads to 30,805,817, which divided by the original number leads to 1.02 per year
+		#30,076,000 x 1.02 (repeated 12 times) leads to 36,662,476, which is an per annum growth rate of 2%
+		#Thus, monthly ticks of reduce_pop = 1.002 should theoretically simulate a 2% pop growth rate per year, which is the average for developing countries during the 20th century.
+		#consequently, monthly ticks of reduce_pop = 0.998 should theoretically simulate a -2% pop growth rate per year which is a demographic crunch (20 years of this rate leads to halved population)
+		#Developed countries experiencing a baby boom will thus have a year increase of 1.017, or 1.0017 per monthly tick
+		
+		#Base growth rates
+		any_country = {
+			any_owned = {
+				limit = {
+					has_province_modifier = dev_1
+					NOT = {
+						OR = {
+							has_province_modifier = family_values1
+							has_province_modifier = natalism_1
+						}
+					}
+				}
+				any_pop = { reduce_pop = 1.0018 }
+			}
+		}
+		any_country = {
+			any_owned = {
+				limit = {
+					has_province_modifier = dev_2
+					NOT = {
+						OR = {
+							has_province_modifier = family_values1
+							has_province_modifier = natalism_1
+						}
+					}
+				}
+				any_pop = { reduce_pop = 1.0013 }
+			}
+		}
+		any_country = {
+			any_owned = {
+				limit = {
+					has_province_modifier = dev_3
+					NOT = {
+						OR = {
+							has_province_modifier = family_values1
+							has_province_modifier = natalism_1
+						}
+					}
+				}
+				any_pop = { reduce_pop = 1.001 }
+			}
+		}
+		any_country = {
+			any_owned = {
+				limit = {
+					has_province_modifier = dev_5
+					NOT = {
+						OR = {
+							has_province_modifier = family_values1
+							has_province_modifier = natalism_1
+						}
+					}
+				}
+				any_pop = { reduce_pop = 0.999 }
+			}
+		}
+		any_country = {
+			any_owned = {
+				limit = {
+					has_province_modifier = dev_6
+					NOT = {
+						OR = {
+							has_province_modifier = family_values1
+							has_province_modifier = natalism_1
+						}
+					}
+				}
+				any_pop = { reduce_pop = 0.998 }
+			}
+		}
+		
+		##########################################
+		### END POPULATION GROWTH TRENDS BLOCK ###
+		##########################################
 		
 		#Clean up sphere coup flag
 		any_country = {
@@ -2553,6 +3183,7 @@ country_event = {
 			}
 			set_country_flag = colonial_province
 			overlord = { set_country_flag = colonial_overlord }
+			overlord = { clr_country_flag = former_colonial_overlord }
 		}
 		
 		### Clear flags ###
@@ -2644,7 +3275,7 @@ country_event = {
 		#Slightly increase primary culture pop growth during pop replacement
 		any_country = {
 			limit = {
-				has_country_flag = population_replacement_underway
+				has_country_flag = ethnic_cleansed
 			}
 			any_owned = {
 				any_pop = {
@@ -2652,7 +3283,7 @@ country_event = {
 						location = { has_province_modifier = pop_replacement_province_modifier }
 						OR = { is_primary_culture = yes is_accepted_culture = yes }
 					}
-					reduce_pop = 1.01
+					reduce_pop = 1.02
 				}
 			}
 		}
@@ -2670,18 +3301,221 @@ country_event = {
 				}
 			}
 		}
+		
 		#Reduce non-accepted pops during genocides
 		any_country = {
 			limit = {
 				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
 			}
 			any_owned = {
+				limit = { owner = { NOT = { cold_war_doctrine = 1 } NOT = { has_country_flag = death_camp_active } } }
 				any_pop = {
 					limit = {
 						location = { has_province_modifier = ethnic_cleansing_province_modifier }
 						AND = { is_primary_culture = no is_accepted_culture = no }
 					}
 					reduce_pop = 0.99
+				}
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { NOT = { cold_war_doctrine = 1 } has_country_flag = death_camp_active } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.99
+				}
+			}
+		}
+		
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { cold_war_doctrine = 1 NOT = { has_country_flag = death_camp_active } } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.99
+				}
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { cold_war_doctrine = 1 has_country_flag = death_camp_active } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.98
+				}
+			}
+		}
+		
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { assymetric_warfare = 1 NOT = { has_country_flag = death_camp_active } } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.98
+				}
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { assymetric_warfare = 1 has_country_flag = death_camp_active } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.97
+				}
+			}
+		}
+		
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { fourth_generation_warfare = 1 NOT = { has_country_flag = death_camp_active } } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.97
+				}
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { fourth_generation_warfare = 1 has_country_flag = death_camp_active } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.96
+				}
+			}
+		}
+		
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { modern_asymmetric_warfare = 1 NOT = { has_country_flag = death_camp_active } } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.96
+				}
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { modern_asymmetric_warfare = 1 has_country_flag = death_camp_active } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.95
+				}
+			}
+		}
+		
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { full_spectrum_dominance = 1 NOT = { has_country_flag = death_camp_active } } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.95
+				}
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { full_spectrum_dominance = 1 has_country_flag = death_camp_active } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.90
+				}
+			}
+		}
+		
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { fifth_generation_warfare = 1 NOT = { has_country_flag = death_camp_active } } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.85
+				}
+			}
+		}
+		any_country = {
+			limit = {
+				OR = { has_country_flag = ethnic_cleansed has_country_modifier = ethnic_cleansing }
+			}
+			any_owned = {
+				limit = { owner = { fifth_generation_warfare = 1 has_country_flag = death_camp_active } }
+				any_pop = {
+					limit = {
+						location = { has_province_modifier = ethnic_cleansing_province_modifier }
+						AND = { is_primary_culture = no is_accepted_culture = no }
+					}
+					reduce_pop = 0.75
 				}
 			}
 		}

@@ -51,10 +51,14 @@ country_event = {
 		OR = {
 			NOT = { exists = SUD }
 			SUD = { vassal_of = ENG government = colonial_government }
+			SUD = { vassal_of = FBU government = colonial_government }
 		}
 		NOT = { year = 1990 }
 		OR = { tag = EGY tag = UAR }
-		1827 = { owner = { capital_scope = { continent = europe } } } # Khartoum
+		OR = {
+			1827 = { owner = { capital_scope = { continent = europe } } } # Khartoum
+			SUD = { is_vassal = yes overlord = { capital_scope = { continent = europe } } }
+		}
 		OR = { government = presidential_dictatorship government = sectarian_dictatorship government = nationalist_dictatorship }
 	}
 
@@ -443,6 +447,7 @@ country_event = {
 
 	trigger = {
 		tag = SUD
+		NOT = { has_global_flag = 2015_start_date_flag }
 		year = 2003
 		
 		is_vassal = no
@@ -492,6 +497,7 @@ country_event = {
 
 	trigger = {
 		tag = SUD
+		NOT = { has_global_flag = 2015_start_date_flag }
 		year = 2005
 		
 		is_vassal = no
@@ -556,6 +562,7 @@ country_event = {
 	fire_only_once = yes
 
 	trigger = {
+		NOT = { has_global_flag = 2015_start_date_flag }
 		tag = SSU
 		year = 2013
 		war = no

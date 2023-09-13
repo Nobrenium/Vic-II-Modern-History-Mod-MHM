@@ -18,6 +18,7 @@ political_decisions = {
 				is_vassal = no
 				AND = {
 					is_vassal = yes
+					NOT = { OR = { government = colonial_government government = mandate_government } }
 					overlord = {
 						OR = {
 							has_country_flag = joindemo
@@ -121,6 +122,7 @@ political_decisions = {
 				is_vassal = no
 				AND = {
 					is_vassal = yes
+					NOT = { OR = { government = colonial_government government = mandate_government } }
 					overlord = {
 						OR = {
 							has_country_flag = joincomm
@@ -233,6 +235,7 @@ political_decisions = {
 				is_vassal = no
 				AND = {
 					is_vassal = yes
+					NOT = { OR = { government = colonial_government government = mandate_government } }
 					overlord = { has_country_flag = joinnam }
 				}
 			}
@@ -278,19 +281,99 @@ political_decisions = {
 		effect = {
 		
 			add_country_modifier = { name = king_timer duration = 730 }
-
-			#Democratic leader is angry
-			random_country = { 
-				limit = { has_country_modifier = democratic_bloc_leader } 
-				diplomatic_influence = { who = THIS value = -20 }
-				relation = { who = THIS value = -20 }
+			
+			#Communist Bloc leader loses influence and bloc members are angry if THIS is part of the communist bloc
+			random_owned = {
+				limit = {
+					owner = {
+						has_country_flag = joincomm
+					}
+				}
+				owner = {
+					random_country = {
+						limit = { has_country_modifier = communist_bloc_leader }
+						diplomatic_influence = { who = THIS value = -20 }
+						relation = { who = THIS value = -20 }
+					}
+					any_country = {
+						limit = { has_country_flag = communist_bloc }
+						diplomatic_influence = { who = THIS value = -10 }
+						relation = { who = THIS value = -10 }
+					}
+					
+					#Democratic bloc members are glad to see a communist bloc member drift away
+					random_country = {
+						limit = { has_country_modifier = democratic_bloc_leader }
+						diplomatic_influence = { who = THIS value = 10 }
+						relation = { who = THIS value = 10 }
+					}
+					any_country = {
+						limit = { has_country_flag = democratic_bloc }
+						diplomatic_influence = { who = THIS value = 5 }
+						relation = { who = THIS value = 5 }
+					}
+				}
 			}
+			
+			#Democratic Bloc leader loses influence and bloc members are angry if THIS is part of the democratic bloc
+			random_owned = {
+				limit = {
+					owner = {
+						has_country_flag = joindemo
+					}
+				}
+				owner = {
+					random_country = {
+						limit = { has_country_modifier = democratic_bloc_leader }
+						diplomatic_influence = { who = THIS value = -20 }
+						relation = { who = THIS value = -20 }
+					}
+					any_country = {
+						limit = { has_country_flag = democratic_bloc }
+						diplomatic_influence = { who = THIS value = -10 }
+						relation = { who = THIS value = -10 }
+					}
+					
+					#Communist bloc members are glad to see a democratic bloc member drift away
+					random_country = {
+						limit = { has_country_modifier = communist_bloc_leader }
+						diplomatic_influence = { who = THIS value = 10 }
+						relation = { who = THIS value = 10 }
+					}
+					any_country = {
+						limit = { has_country_flag = communist_bloc }
+						diplomatic_influence = { who = THIS value = 5 }
+						relation = { who = THIS value = 5 }
+					}
+				}
+			}
+			
+			#Already part of NAM or not part of any bloc
+			random_owned = {
+				limit = {
+					owner = {
+						OR = {
+							has_country_flag = joinnam
+							AND = { NOT = { OR = { has_country_flag = joincomm has_country_flag = joindemo } } }
+						}
+					}
+				}
+				owner = {
+					#Democratic leader is angry
+					random_country = {
+						limit = { has_country_modifier = democratic_bloc_leader } 
+						diplomatic_influence = { who = THIS value = -20 }
+						relation = { who = THIS value = -20 }
+					}
 
-			#Communist leader is angry
-			random_country = { 
-				limit = { has_country_modifier = communist_bloc_leader } 
-				diplomatic_influence =  { who = THIS value = -20 }
-				relation = { who = THIS value = -20 } 
+					#Communist leader is angry
+					random_country = {
+						limit = { has_country_modifier = communist_bloc_leader } 
+						diplomatic_influence =  { who = THIS value = -20 }
+						relation = { who = THIS value = -20 } 
+					}
+				}
+			
 			}
 			
 			#All NAM GPs gain influence in THIS
@@ -330,6 +413,7 @@ political_decisions = {
 			OR = {
 				is_vassal = no
 				AND = {
+					NOT = { OR = { government = colonial_government government = mandate_government } }
 					is_vassal = yes
 					overlord = { tag = RUS }
 				}
@@ -429,6 +513,7 @@ political_decisions = {
 			OR = {
 				is_vassal = no
 				AND = {
+					NOT = { OR = { government = colonial_government government = mandate_government } }
 					is_vassal = yes
 					overlord = { tag = CHI }
 				}

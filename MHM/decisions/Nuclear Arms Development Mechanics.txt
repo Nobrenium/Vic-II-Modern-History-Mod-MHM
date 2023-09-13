@@ -33,10 +33,10 @@ political_decisions = {
 			OR = { 
 				is_greater_power = yes 
 				is_secondary_power = yes 
-				military_score = 600
+				OR = { military_score = 600 has_country_modifier = international_pariah }
 				AND = {
 					any_owned_province = { trade_goods = other_minerals } #Has uranium deposits
-					military_score = 300
+					OR = { military_score = 300  has_country_modifier = international_pariah }
 				}
 			}
 
@@ -86,19 +86,7 @@ political_decisions = {
 			#### Badboy if treaties are unsigned ####
 
 			#Base infamy
-			badboy = 10
-
-			#Partial but no Comprehensive Nuclear Test Ban treaty
-			random_owned = { 
-				limit = { owner = { NOT = { has_country_flag = signed_partial_test_ban_treaty } has_global_flag = partial_test_ban_treaty } }
-				owner = { badboy = 2.5 }
-			}
-
-			#Partial and Comprehensive Nuclear Test Ban treaty
-			random_owned = { 
-				limit = { owner = { NOT = { has_country_flag = signed_comprehensive_test_ban_treaty } has_global_flag = comprehensive_test_ban_treaty } }
-				owner = { badboy = 2.5 }
-			}
+			badboy = 2.5
 
 			#### Nuclear Development Time ####
 
@@ -189,7 +177,7 @@ political_decisions = {
 			OR = { 
 				is_greater_power = yes 
 				is_secondary_power = yes 
-				military_score = 600 
+				OR = { military_score = 600 has_country_modifier = international_pariah }
 			}
 
 			OR = { war_policy = jingoism war_policy = pro_military }
@@ -212,19 +200,7 @@ political_decisions = {
 			#### Badboy if treaties are unsigned ####
 
 			#Base infamy
-			badboy = 10
-
-			#Partial but no Comprehensive Nuclear Test Ban treaty
-			random_owned = { 
-				limit = { owner = { NOT = { has_country_flag = signed_partial_test_ban_treaty } has_global_flag = partial_test_ban_treaty } }
-				owner = { badboy = 2.5 }
-			}
-
-			#Partial and Comprehensive Nuclear Test Ban treaty
-			random_owned = { 
-				limit = { owner = { NOT = { has_country_flag = signed_comprehensive_test_ban_treaty } has_global_flag = comprehensive_test_ban_treaty } }
-				owner = { badboy = 2.5 }
-			}
+			badboy = 2.5
 
 			#### Nuclear Development Time ####
 
@@ -255,97 +231,6 @@ political_decisions = {
 			factor = 1
 		}
 
-	}
-
-	reset_bomb = {
-		picture = "reset_bomb"
-		alert = no
-		potential = {
-			OR = { has_country_modifier = atomic_nation has_country_modifier = hydrogen_nation }
-			OR = { 
-				has_country_flag = icbm_bomb
-				has_country_flag = sub_bomb 
-				has_country_flag = air_bomb 
-				has_country_modifier = tactical_nukes 
-			}
-		}
-
-		allow = {
-			war = no
-			OR = { 
-				ai = no 
-				AND = { ai = yes is_greater_power = no is_secondary_power = no has_country_flag = icbm_bomb has_country_flag = sub_bomb }
-				AND = { ai = yes is_greater_power = no has_country_flag = icbm_bomb }
-			} 
-		}
-
-		effect = {
-			clr_country_flag = icbm_bomb
-			clr_country_flag = sub_bomb
-			clr_country_flag = air_bomb
-
-			remove_country_modifier = tactical_nukes
-		}
-
-	}
-
-	air_bomb = {
-		picture = "air_bomb"
-		potential = {
-			strategic_bomber = 1
-			OR = { has_country_modifier = atomic_nation has_country_modifier = hydrogen_nation }
-			NOT = { has_country_flag = air_bomb }
-		}
-
-		allow = {
-			military_score = 600
-		}
-
-		effect = {
-			set_country_flag = air_bomb
-		}
-	}
-
-	sub_bomb = {
-		picture = "sub_bomb"
-		potential = {
-			submarine_launched_ballistic_missile = 1
-			OR = { has_country_modifier = atomic_nation has_country_modifier = hydrogen_nation }
-			NOT = { has_country_flag = sub_bomb }
-			
-			num_of_ports = 1
-		}
-
-		allow = {
-			num_of_ports = 1
-
-			OR = { is_greater_power = yes is_secondary_power = yes }
-			
-			military_score = 600
-		}
-
-		effect = {
-			set_country_flag = sub_bomb	
-		}
-	}
-
-	icbm_bomb = {
-		picture = "icbm_bomb"
-		potential = {
-			icbm = 1
-			OR = { has_country_modifier = atomic_nation has_country_modifier = hydrogen_nation }
-			NOT = { has_country_flag = icbm_bomb }
-		}
-
-		allow = {
-			military_score = 600
-			invention = second_generation_icbm
-			is_greater_power = yes
-		}
-
-		effect = {
-			set_country_flag = icbm_bomb 
-		}
 	}
 
 	build_tactical_nuke = {

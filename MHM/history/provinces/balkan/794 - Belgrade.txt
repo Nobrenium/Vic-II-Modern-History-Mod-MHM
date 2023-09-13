@@ -4,7 +4,7 @@ add_core = YUG
 add_core = SER
 trade_goods = grain
 life_rating = 35
-terrain = urban_belgrade
+terrain = urban
 colonial = 0
 state_building = {
 	level = 2
@@ -54,4 +54,8 @@ state_building = {
 	building = glass_factory
 	upgrade = yes
 }
+}
+2015.1.1 = {
+owner = SER
+controller = SER
 }

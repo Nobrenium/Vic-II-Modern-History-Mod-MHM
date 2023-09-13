@@ -31,7 +31,7 @@ political_decisions = {
 				AND = { tag = COS government = democracy }
 				AND = { tag = FIN has_country_flag = finlandization government = democracy }
 				AND = { tag = MAL government = democracy }
-				AND = { tag = SWE government = hms_government NOT = { has_global_flag = RUS_FIN_war } }
+				AND = { tag = SWE government = hms_government NOT = { OR = { has_global_flag = RUS_FIN_war has_global_flag = RUS_UKR_war } } }
 			}
 			
 			#Not a dictatorship
@@ -57,6 +57,7 @@ political_decisions = {
 			}
 			set_country_flag = renounced_war_rights
 			country_event = 1512259
+			add_country_modifier = { name = neutrality duration = -1 }
 			
 			#Add marker on capital for players to know which countries are neutral
 			random_owned = {
@@ -111,6 +112,7 @@ political_decisions = {
 		effect = {
 			prestige = -50
 			remove_country_modifier = neutrality
+			remove_country_modifier = neutrality_AI
 			clr_country_flag = renounced_war_rights
 			clr_country_flag = neutrality
 			country_event = 1512260
@@ -147,6 +149,7 @@ political_decisions = {
 				tag = SWE
 				government = hms_government
 				NOT = { has_global_flag = RUS_FIN_war }
+				NOT = { has_global_flag = RUS_UKR_war }
 			}
 			modifier = {
 				factor = 0
@@ -157,6 +160,11 @@ political_decisions = {
 			modifier = {
 				factor = 0
 				tag = MAL
+				government = democracy
+			}
+			modifier = {
+				factor = 0
+				tag = UKR
 				government = democracy
 			}
 		
